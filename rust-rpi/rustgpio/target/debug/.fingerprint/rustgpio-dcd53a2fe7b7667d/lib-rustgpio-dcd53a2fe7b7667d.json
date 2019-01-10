@@ -1,0 +1,1 @@
+{"rustc":10483830040033952076,"features":"[]","target":8672863227792724083,"profile":11053206828898930031,"path":4464805379942900436,"deps":[["byteorder v0.5.3","byteorder",1173026884662065158]],"local":[{"MtimeBased":[[1544712279,967681581],".fingerprint/rustgpio-dcd53a2fe7b7667d/dep-lib-rustgpio-dcd53a2fe7b7667d"]}],"rustflags":[],"edition":"Edition2015"}

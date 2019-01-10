@@ -1,0 +1,9 @@
+[package]
+name = "serial_reader"
+version = "0.1.0"
+authors = ["pi"]
+edition = "2018"
+
+[dependencies]
+rppal = "0.9"
+bit-vec = "0.5.0"

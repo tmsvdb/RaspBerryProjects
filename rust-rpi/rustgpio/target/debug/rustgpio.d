@@ -1,0 +1,1 @@
+/home/pi/Projects/rust-rpi/rustgpio/target/debug/rustgpio: /home/pi/Projects/rust-rpi/rustgpio/src/lib.rs /home/pi/Projects/rust-rpi/rustgpio/src/main.rs /home/pi/Projects/rust-rpi/rustgpio/src/pigpio.rs
