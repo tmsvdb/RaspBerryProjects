@@ -1,0 +1,96 @@
+Beste Patrick,
+
+Hieronder heb ik een opsomming gemaakt van de verschillende features van de app, en de bijbehorende prijzen.
+Deze prijzen zijn een indicatie van waar je ongeveer aan moet denken als het gaan om het ontwikkelen van een app.
+Dit betekend dat er ruimte is voor onderhandeling, vooral gezien de dynamische aard van mijn ontwikkel methodiek (zie conclusie).
+
+
+Basis opzet Applicatie
+======================
+Met de basis opzet van de applicatie word bedoeld:
+    + Een applicatie opgezet rondom een aangegeven huisstijl.
+    + Een applicatie waarbij er door verschillende menu's kan worden genavigeerd.
+    + Per menu word er een lijst van opties getoond (video of audio files) met naam en icon.
+Voor de basis van de game vraag ik een prijs => 1500 euro
+
+Audio player
+============
+Bij het kiezen van een audio bestand, wordt er fullscreen een audiospeler getoond die de audio afspeeld en waarbij de gebruiker door de audio files kan navigeren.
+Het implementeren van deze audio player kost rond de => 500
+
+Static vs Dynamic video streaming
+=================================
+Onder Static verstaan we in dit geval een app waarbij de video's in de mobile-app geintegreerd zijn, onder Dynamic verstaan we een app waarbij de video's vanaf een externe locatie worden afgespeeld (streaming).
+
+    Voordelen van Static
+    --------------------
+    + Voor een static app is geen internet connectie nodig om de video's af te spelen.
+    + Het afspelen van geintegreerde video's is minder bug gevoelig.
+    + Goedkoper te ontwikkelen.
+
+    Nadelen van Static
+    ------------------
+    + De mobile-app word groter, de video's zitten letterlijk in de app.
+    + Als we in de toekomst video's willen toevoegen dan moeten deze aan het project worden toegevoegd en waarbij de app opnieuw voor de appstore gebuild moeten worden. Dit maakt updaten van de content duurder.
+    + Gebruikers moeten de app handmatig updaten.
+
+    Voordelen van Dynamic
+    ---------------------
+    + De content van de app is gemakkelijk aan te passen. Je zou bijvoorbeeld video's vanaf youtube kunnen streamen.
+    + Gebruikers hoeven geen updates door te voeren, de app update zichzelf.
+    + Kleinere app. (sneller te downloaden, neemt minder plaats in op je mobile device)
+
+    Nadelen van Dynamic
+    -------------------
+    + Altijd een internet verbinding nodig.
+    + De user experience rondom streaming kan soms als storend ervaren worden. Zie huidige youtube app voor android, het kan voorkomen dat video's minder goed afspelen.
+
+    Prijzen
+    -------
+    1. Static video player => 500 euro
+	of
+    2. Dynamic video player => 1000 euro
+
+Builden voor verschillende platforms
+====================================
+Er zijn vele verschillende platformen waar we de app voor kunnen releasen.
+Op dit moment kan ik support aanbieden voor de volgende platformen:
+    1. Windows Desktop => gratis
+    2. Linux Desktop  => 50 euro
+    3. OSX (apple) Desktop => 50 euro
+    4. Android mobile => 500 euro
+    5. iOS (apple) mobile => 1000 euro
+    6. WebGL2 (html5) browser => ik bied dit wel aan, maar erzijn betere en goedkopere mogelijkheden.
+
+Uitbreidings mogelijkheden
+=========================
+Er zijn ook mogelijkheden om de app te streamen via Chromecast => 1000 euro.
+
+
+Tips
+====
+Als we de audio files als een video streamen (met een statische achtergrond) dan hoeft er geen aparte audio speler geimplementeerd te worden.
+
+Voorbeeld prijs berekening
+==========================
+Hieronder drie vooreelden van wat de ontwikkel kosten ongeveer kunnen zijn.
+    1. Android Only + Static video player = 1500(basis) + 500(android) + 500(video) = 2500 euro
+    2. Android Only + Dynamic video player + Aparte audio speler = 1500(basis) + 500(android) + 1000(video) + 500(audio) = 3500 euro.
+    3. Android & iOS + Dynamic video player + Audio player = 1500(basis) + 500(android) + 1000(ios) + 1000(video) + 500(audio) = 4500 euro.
+
+Conclusie
+=========
+Als we samen deze applicatie gaan ontwikkelen dan zal het project via de SCRUM methodiek worden ontwikkeld. 
+Dit betekend voor jou als klant dat er oplever momenten (sprints) gaan zijn die we van te voren vast leggen. Vooraf aan de iedere sprint gaan we dan plannen welke van de boven genoemde elementen in de app zullen zitten (de belangrijkste eerst).
+Tijdens de eerste oplevering gaan we kijken of dit is hoe jij als klant je het had voorgesteld. Zo ja, dan start ik aan de 2e sprint. 
+Zo nee, dan gaan we kijken wat jij graag anders had gewild en wat dit betekend voor de oplevering of kosten van het eindproduct, dit word dan meegenomen in de volgende sprint.
+Dit doen we voor de eerste 2 sprints, in de laatste sprint wordt het product afgerond en opgeleverd.
+Ik maak gebruik van deze management technieken omdat ik ervaren heb dat het ontwikkelen van applicaties met een creatieve insteek kan leiden tot feature creeping. 
+Dit betekend dat de focus van de applicatie niet meer ligt op het ontwikkelen van een robuste applicate maar dat er minder belangrijk functionaliteiten prioriteit krijgen. 
+Middels deze techniek geef ik jou als klant de mogelijkheid om voor jou belangrijke keuzes te maken zonder dat onverwachte gevolgen heeft. 
+
+Alle bovengenoemde prijzen zouden exclusief BTW zijn.
+Mochten er zaken onduidelijk zijn, of zijn er zaken waar je anders over denkt, dan hoor ik het graag.
+
+Met vriendelijke groet,
+Thomas van den Bighelaar.
