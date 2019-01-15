@@ -61,11 +61,11 @@ fn main() {
 fn request_data (gpio: &mut Gpio) {
     println!("Try Request data");
     let mut timeout = 0;
-    while gpio.read(LTCH_IN).unwrap() == Level::Low && timeout < 10000 {
+    while gpio.read(LTCH_IN).unwrap() == Level::Low && timeout < 1000 {
         gpio.write(LTCH_OUT, Level::High);
         timeout += 1;
     }
-    if timeout > 9999 {
+    if timeout > 999 {
         gpio.write(LTCH_OUT, Level::Low);
         thread::sleep(Duration::from_millis(100));
         request_data (gpio);
