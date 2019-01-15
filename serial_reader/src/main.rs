@@ -35,7 +35,7 @@ fn main() {
 
         thread::sleep(Duration::from_millis(50));
         tries += 1;
-        println!("Try({}) Request data", tries);
+        //println!("Try({}) Request data", tries);
 
         //let mut data: Vec<Level> = Vec::new();
         let mut bytes = BitVec::from_elem(24, false);
@@ -48,11 +48,11 @@ fn main() {
         // after resonse, drop request
         gpio.write(LTCH_OUT, Level::Low);
 
-        println!("Read finished");
+        //println!("Read finished");
 
         pint_bytes (&bytes);
 
-        println!("");
+        //println!("");
     }
 }
 
