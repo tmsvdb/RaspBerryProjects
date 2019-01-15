@@ -35,10 +35,10 @@ fn main() {
     // ask for data and wait for response 
     println!("Request data");
 
-    gpio.write(LTCH_OUT, Level::High);
-    while gpio.read(LTCH_IN).unwrap() == Level::Low {}
-
-    println!("Start read");
+    
+    while gpio.read(LTCH_IN).unwrap() == Level::Low {
+        gpio.write(LTCH_OUT, Level::High);
+    }
 
     // wait for all 24 bits to be received
 	for i in 0..24 {
@@ -54,14 +54,12 @@ fn main() {
 		while gpio.read(CLCK).unwrap() == Level::High {
             //thread::sleep(Duration::from_micros(1));
         }		
-	}
-
-    println!("Read finished");
+	}  
 
     // after resonse, drop request
     gpio.write(LTCH_OUT, Level::Low);
 
-    println!("Tell sender completed");
+    println!("Read finished");
 
     print!("data:");
 
