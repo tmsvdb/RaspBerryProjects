@@ -86,10 +86,10 @@ fn pint_byte (byte: &BitVec) {
 
 fn wait_for_pin (gpio: &Gpio, pin: u8, from_state: Level) -> Result <(), ()> {
     let mut timeout = 0;
-    while gpio.read(CLCK).unwrap() == from_state && timeout < 10000 {
+    while gpio.read(CLCK).unwrap() == from_state && timeout < 10_000_000 {
         timeout += 1;
     }
-    if timeout > 9999 {
+    if timeout > 9_999_999 {
         Err(())
     } else {
         Ok(())
