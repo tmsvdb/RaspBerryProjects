@@ -75,7 +75,7 @@ fn request_data (gpio: &mut Gpio) {
 fn get_serial_byte (gpio: &mut Gpio, byte: &mut BitVec) {
     for i in 0..8 {
         while gpio.read(CLCK).unwrap() == Level::Low {}
-        byte.set(i, gpio.read(DS).unwrap() == Level::High);
+        byte.set(i, match gpio.read(DS).unwrap() { Level::High => true, Level::Low => false });
         while gpio.read(CLCK).unwrap() == Level::High {}		
     } 
 }
