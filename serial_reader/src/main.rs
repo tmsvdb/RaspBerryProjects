@@ -41,9 +41,9 @@ fn main() {
         let mut bytes = BitVec::from_elem(24, false);
 
         // ask for data and wait for response     
-        if request_data (&mut gpio).is_err() { continue; } 
+        if request_data (&mut gpio).is_err() { println!("Request failed!"); continue; } 
 
-        if get_serial_bytes (&mut gpio, &mut bytes).is_err() { continue; } 
+        if get_serial_bytes (&mut gpio, &mut bytes).is_err() { println!("Get data failed!"); continue; } 
 
         // after resonse, drop request
         gpio.write(LTCH_OUT, Level::Low);
