@@ -29,33 +29,19 @@ fn main() {
     gpio.set_mode(LTCH_IN, Mode::Input);
     gpio.set_mode(LTCH_OUT, Mode::Output);
 
-    	
-	let mut data: Vec<Level> = Vec::new();
-
     loop {
 
-        // ask for data and wait for response 
-        println!("Request data");
-        
-        while gpio.read(LTCH_IN).unwrap() == Level::Low {
-            gpio.write(LTCH_OUT, Level::High);
-        }
+        //let mut data: Vec<Level> = Vec::new();
+        let mut byte_1 = BitVec::from_elem(8, false);
+        let mut byte_2 = BitVec::from_elem(8, false);
+        let mut byte_3 = BitVec::from_elem(8, false);
 
-        // wait for all 24 bits to be received
-        for i in 0..24 {
-            
-            // wait for clock to go from low to high, so we know that the data line is set
-            while gpio.read(CLCK).unwrap() == Level::Low {
-                //thread::sleep(Duration::from_micros(1));
-            }
-            // pull the data and store it in an array
-            data.push(gpio.read(DS).unwrap());
+        // ask for data and wait for response     
+        request_data (gpio);
 
-            // wait for clock to go from high to low, so we know that the sender is done with this bit.
-            while gpio.read(CLCK).unwrap() == Level::High {
-                //thread::sleep(Duration::from_micros(1));
-            }		
-        }  
+        get_serial_byte (gpio, byte_1);
+        get_serial_byte (gpio, byte_2);
+        get_serial_byte (gpio, byte_3);
 
         // after resonse, drop request
         gpio.write(LTCH_OUT, Level::Low);
@@ -72,6 +58,28 @@ fn main() {
 
         thread::sleep(Duration::from_millis(1000));
     }
+}
+
+fn request_data (gpio: &mut Gpio) {
+    println!("Try Request data");
+    let timeout = 0;
+    while gpio.read(LTCH_IN).unwrap() == Level::Low && timout < 10000 {
+        gpio.write(LTCH_OUT, Level::High);
+        timeout += 1;
+    }
+    if timeout > 9999 {
+        gpio.write(LTCH_OUT, Level::Low);
+        thread::sleep(Duration::from_millis(100));
+        request_data (gpio);
+    }
+}
+
+fn get_serial_byte (gpio: &mut Gpio, byte: &mut BitVec) {
+    for i in 0..8 {
+        while gpio.read(CLCK).unwrap() == Level::Low {}
+        byte.set(3, matchgpio.read(DS).unwrap() == Level::High);
+        while gpio.read(CLCK).unwrap() == Level::High {}		
+    } 
 }
 
 
