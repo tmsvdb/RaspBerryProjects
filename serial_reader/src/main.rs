@@ -29,9 +29,13 @@ fn main() {
     gpio.set_mode(LTCH_IN, Mode::Input);
     gpio.set_mode(LTCH_OUT, Mode::Output);
 
+    let mut tries = 0;
+
     loop {
 
         thread::sleep(Duration::from_millis(1000));
+        tries += 1;
+        println!("Try({}) Request data", tries);
 
         //let mut data: Vec<Level> = Vec::new();
         let mut byte_1 = BitVec::from_elem(8, false);
@@ -59,7 +63,6 @@ fn main() {
 }
 
 fn request_data (gpio: &mut Gpio) -> Result <(), ()> {
-    println!("Try Request data");
     gpio.write(LTCH_OUT, Level::High);
     match wait_for_pin(&gpio, LTCH_IN, Level::Low) {
         Ok(o) => return Ok(()),
