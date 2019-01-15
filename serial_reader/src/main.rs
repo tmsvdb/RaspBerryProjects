@@ -43,7 +43,7 @@ fn main() {
         // ask for data and wait for response     
         if request_data (&mut gpio).is_err() { continue; } 
 
-        if get_serial_byte (&mut gpio, &mut bytes).is_err() { continue; } 
+        if get_serial_bytes (&mut gpio, &mut bytes).is_err() { continue; } 
 
         // after resonse, drop request
         gpio.write(LTCH_OUT, Level::Low);
@@ -78,7 +78,7 @@ fn get_serial_bytes (gpio: &mut Gpio, byte: &mut BitVec) -> Result <(), ()> {
 }
 
 fn pint_bytes (bytes: &BitVec) {
-    let cb = bytes.to_bytes().unwrap(); 
+    let cb = bytes.to_bytes(); 
     println!("bytes: {}-{}-{}", cb[0], cb[1], cb[2])
 }
 
