@@ -38,25 +38,19 @@ fn main() {
         println!("Try({}) Request data", tries);
 
         //let mut data: Vec<Level> = Vec::new();
-        let mut byte_1 = BitVec::from_elem(8, false);
-        let mut byte_2 = BitVec::from_elem(8, false);
-        let mut byte_3 = BitVec::from_elem(8, false);
+        let mut bytes = BitVec::from_elem(24, false);
 
         // ask for data and wait for response     
         if request_data (&mut gpio).is_err() { continue; } 
 
-        if get_serial_byte (&mut gpio, &mut byte_1).is_err() { continue; } 
-        if get_serial_byte (&mut gpio, &mut byte_2).is_err() { continue; } 
-        if get_serial_byte (&mut gpio, &mut byte_3).is_err() { continue; } 
+        if get_serial_byte (&mut gpio, &mut bytes).is_err() { continue; } 
 
         // after resonse, drop request
         gpio.write(LTCH_OUT, Level::Low);
 
         println!("Read finished");
 
-        pint_byte (&byte_1);
-        pint_byte (&byte_2);
-        pint_byte (&byte_3);
+        pint_bytes (&bytes);
 
         println!("");
     }
@@ -70,8 +64,8 @@ fn request_data (gpio: &mut Gpio) -> Result <(), ()> {
     }
 }
 
-fn get_serial_byte (gpio: &mut Gpio, byte: &mut BitVec) -> Result <(), ()> {
-    for i in 0..8 {
+fn get_serial_bytes (gpio: &mut Gpio, byte: &mut BitVec) -> Result <(), ()> {
+    for i in 0..24 {
         if wait_for_pin(&gpio, CLCK, Level::Low).is_err() { return Err(()); }
         if (gpio.read(DS).unwrap() == Level::High) {
             byte.set(i, true);
@@ -83,12 +77,9 @@ fn get_serial_byte (gpio: &mut Gpio, byte: &mut BitVec) -> Result <(), ()> {
     Ok(())
 }
 
-fn pint_byte (byte: &BitVec) {
-    print!("[");
-    for i in 0..8 {
-        print!("{}", match byte.get(i).unwrap() { false => 0, true => 1, });
-    }
-    print!("]");
+fn pint_bytes (bytes: &BitVec) {
+    let cb = bytes.to_bytes().unwrap(); 
+    println!("bytes: {}-{}-{}", cb[0], cb[1], cb[2])
 }
 
 fn wait_for_pin (gpio: &Gpio, pin: u8, from_state: Level) -> Result <(), ()> {
