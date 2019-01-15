@@ -1,3 +1,4 @@
+
 // https://github.com/golemparts/rppal
 extern crate rppal;
 // http://contain-rs.github.io/bit-vec/bit_vec/
@@ -34,18 +35,11 @@ fn main() {
     	while gpio.read(LTCH_IN).unwrap() == Level::Low {
 		gpio.write(LTCH_OUT, Level::High)	
     	}
-
-	for i in 0..8 {
-		
-		while gpio.read(CLCK).unwrap() == Level::Low {}
- 
-		data.push(gpio.read(DS).unwrap());
-
-		while gpio.read(CLCK).unwrap() == Level::High {}
-		
+	while data.len() < 23 {
+		if gpio.read(CLCK).unwrap() == Level::High {
+			 data.push(gpio.read(DS).unwrap());
+		}
 	}
-
-	gpio.write(LTCH_OUT, Level::Low);
 
 	for i in 0..data.len() {
 		print!("{}", match data[i]{ Level::Low => 0, Level::High => 1, });

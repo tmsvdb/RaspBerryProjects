@@ -30,25 +30,23 @@ fn main() {
     gpio.set_mode(LTCH_OUT, Mode::Output);
 
     	
-	let mut data: Vec<Level> = Vec::new();
+	let mut first_byte: BitVec = BitVec::new();
+	let mut second_byte: BitVec = BitVec::new();
+	let mut third_byte: BitVec = BitVec::new();
+
     	while gpio.read(LTCH_IN).unwrap() == Level::Low {
 		gpio.write(LTCH_OUT, Level::High)	
     	}
-
-	for i in 0..8 {
-		
-		while gpio.read(CLCK).unwrap() == Level::Low {}
- 
-		data.push(gpio.read(DS).unwrap());
-
-		while gpio.read(CLCK).unwrap() == Level::High {}
-		
+	
+	// read first bit
+	while data.len() < 7 {
+		if gpio.read(CLCK).unwrap() == Level::High {
+			 data.push(gpio.read(DS).unwrap());
+		}
 	}
-
-	gpio.write(LTCH_OUT, Level::Low);
-
-	for i in 0..data.len() {
-		print!("{}", match data[i]{ Level::Low => 0, Level::High => 1, });
+	
+	for i in 0..8 {
+		print!("{}", data[i]);
 	}
 }
 
