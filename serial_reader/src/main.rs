@@ -73,7 +73,11 @@ fn request_data (gpio: &mut Gpio) -> Result <(), ()> {
 fn get_serial_byte (gpio: &mut Gpio, byte: &mut BitVec) -> Result <(), ()> {
     for i in 0..8 {
         if wait_for_pin(&gpio, CLCK, Level::Low).is_err() { return Err(()); }
-        byte.set(i, match gpio.read(DS).unwrap() { Level::High => true, Level::Low => false });
+        if (gpio.read(DS).unwrap() == Level::High) {
+            byte.set(i, true);
+        } else {
+            byte.set(i, false);
+        }
         if wait_for_pin(&gpio, CLCK, Level::High).is_err() { return Err(()); }		
     } 
     Ok(())
