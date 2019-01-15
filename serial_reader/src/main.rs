@@ -33,7 +33,7 @@ fn main() {
 
     loop {
 
-        thread::sleep(Duration::from_millis(1000));
+        thread::sleep(Duration::from_millis(50));
         tries += 1;
         println!("Try({}) Request data", tries);
 
