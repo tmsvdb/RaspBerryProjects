@@ -61,7 +61,7 @@ fn main() {
 fn request_data (gpio: &mut Gpio) {
     println!("Try Request data");
     let timeout = 0;
-    while gpio.read(LTCH_IN).unwrap() == Level::Low && timout < 10000 {
+    while gpio.read(LTCH_IN).unwrap() == Level::Low && timeout < 10000 {
         gpio.write(LTCH_OUT, Level::High);
         timeout += 1;
     }
@@ -83,7 +83,7 @@ fn get_serial_byte (gpio: &mut Gpio, byte: &mut BitVec) {
 fn pint_byte (byte: &BitVec) {
     print!("[");
     for i in 0..8 {
-        print!("{}", match byte.get(i) { false => 0, true => 1, });
+        print!("{}", match byte.get(i).unwrap_or(false) { false => 0, true => 1, });
     }
     print!("]");
 }
