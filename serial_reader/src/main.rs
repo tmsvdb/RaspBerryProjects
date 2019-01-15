@@ -32,42 +32,46 @@ fn main() {
     	
 	let mut data: Vec<Level> = Vec::new();
 
-    // ask for data and wait for response 
-    println!("Request data");
+    loop {
 
-    
-    while gpio.read(LTCH_IN).unwrap() == Level::Low {
-        gpio.write(LTCH_OUT, Level::High);
-    }
-
-    // wait for all 24 bits to be received
-	for i in 0..24 {
-		
-        // wait for clock to go from low to high, so we know that the data line is set
-		while gpio.read(CLCK).unwrap() == Level::Low {
-            //thread::sleep(Duration::from_micros(1));
+        // ask for data and wait for response 
+        println!("Request data");
+        
+        while gpio.read(LTCH_IN).unwrap() == Level::Low {
+            gpio.write(LTCH_OUT, Level::High);
         }
-        // pull the data and store it in an array
-		data.push(gpio.read(DS).unwrap());
 
-        // wait for clock to go from high to low, so we know that the sender is done with this bit.
-		while gpio.read(CLCK).unwrap() == Level::High {
-            //thread::sleep(Duration::from_micros(1));
-        }		
-	}  
+        // wait for all 24 bits to be received
+        for i in 0..24 {
+            
+            // wait for clock to go from low to high, so we know that the data line is set
+            while gpio.read(CLCK).unwrap() == Level::Low {
+                //thread::sleep(Duration::from_micros(1));
+            }
+            // pull the data and store it in an array
+            data.push(gpio.read(DS).unwrap());
 
-    // after resonse, drop request
-    gpio.write(LTCH_OUT, Level::Low);
+            // wait for clock to go from high to low, so we know that the sender is done with this bit.
+            while gpio.read(CLCK).unwrap() == Level::High {
+                //thread::sleep(Duration::from_micros(1));
+            }		
+        }  
 
-    println!("Read finished");
+        // after resonse, drop request
+        gpio.write(LTCH_OUT, Level::Low);
 
-    print!("data:");
+        println!("Read finished");
 
-	for i in 0..data.len() {
-		print!("{}", match data[i]{ Level::Low => 0, Level::High => 1, });
-	}
+        print!("data [");
 
-    println!("done");
+        for i in 0..data.len() {
+            print!("{}", match data[i]{ Level::Low => 0, Level::High => 1, });
+        }
+
+        println!("]");
+
+        thread::sleep(Duration::from_millis(1000));
+    }
 }
 
 
