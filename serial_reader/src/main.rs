@@ -36,23 +36,25 @@ fn main() {
     while gpio.read(LTCH_IN).unwrap() == Level::Low {
 		gpio.write(LTCH_OUT, Level::High)	
 	}
-    // after resonse, drop request
-    gpio.write(LTCH_OUT, Level::Low);
 
     // wait for all 24 bits to be received
 	for i in 0..24 {
 		
         // wait for clock to go from low to high, so we know that the data line is set
 		while gpio.read(CLCK).unwrap() == Level::Low {
-            thread::sleep(Duration::from_micros(1));
+            //thread::sleep(Duration::from_micros(1));
         }
         // pull the data and store it in an array
 		data.push(gpio.read(DS).unwrap());
+        
         // wait for clock to go from high to low, so we know that the sender is done with this bit.
 		while gpio.read(CLCK).unwrap() == Level::High {
-            thread::sleep(Duration::from_micros(1));
+            //thread::sleep(Duration::from_micros(1));
         }		
 	}
+
+    // after resonse, drop request
+    gpio.write(LTCH_OUT, Level::Low);
 
 	for i in 0..data.len() {
 		print!("{}", match data[i]{ Level::Low => 0, Level::High => 1, });
