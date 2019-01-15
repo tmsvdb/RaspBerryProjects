@@ -37,24 +37,22 @@ fn main() {
         let mut byte_3 = BitVec::from_elem(8, false);
 
         // ask for data and wait for response     
-        request_data (gpio);
+        request_data (&mut gpio);
 
-        get_serial_byte (gpio, byte_1);
-        get_serial_byte (gpio, byte_2);
-        get_serial_byte (gpio, byte_3);
+        get_serial_byte (&mut gpio, &mut byte_1);
+        get_serial_byte (&mut gpio, &mut byte_2);
+        get_serial_byte (&mut gpio, &mut byte_3);
 
         // after resonse, drop request
         gpio.write(LTCH_OUT, Level::Low);
 
         println!("Read finished");
 
-        print!("data [");
+        pint_byte (&byte_1);
+        pint_byte (&byte_2);
+        pint_byte (&byte_3);
 
-        for i in 0..data.len() {
-            print!("{}", match data[i]{ Level::Low => 0, Level::High => 1, });
-        }
-
-        println!("]");
+        println!("");
 
         thread::sleep(Duration::from_millis(1000));
     }
@@ -77,9 +75,17 @@ fn request_data (gpio: &mut Gpio) {
 fn get_serial_byte (gpio: &mut Gpio, byte: &mut BitVec) {
     for i in 0..8 {
         while gpio.read(CLCK).unwrap() == Level::Low {}
-        byte.set(3, matchgpio.read(DS).unwrap() == Level::High);
+        byte.set(3, gpio.read(DS).unwrap() == Level::High);
         while gpio.read(CLCK).unwrap() == Level::High {}		
     } 
+}
+
+fn pint_byte (byte: &BitVec) {
+    print!("[");
+    for i in 0..8 {
+        print!("{}", match byte.get(i) { false => 0, true => 1, });
+    }
+    print!("]");
 }
 
 
