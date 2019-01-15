@@ -62,18 +62,18 @@ fn request_data (gpio: &mut Gpio) -> Result <(), ()> {
     println!("Try Request data");
     gpio.write(LTCH_OUT, Level::High);
     match wait_for_pin(&mut gpio, LTCH_IN, Level::Low) {
-        Ok() => return Ok(),
-        Err() => return Err(),
+        Ok(o) => return Ok(()),
+        Err(e) => return Err(()),
     }
 }
 
 fn get_serial_byte (gpio: &mut Gpio, byte: &mut BitVec) -> Result <(), ()> {
     for i in 0..8 {
-        if wait_for_pin(&mut gpio, CLCK, Level::Low).is_err() { break; Err() }
+        if wait_for_pin(&mut gpio, CLCK, Level::Low).is_err() { return Err(()); }
         byte.set(i, match gpio.read(DS).unwrap() { Level::High => true, Level::Low => false });
-        if wait_for_pin(&mut gpio, CLCK, Level::High).is_err() { break; Err() }		
+        if wait_for_pin(&mut gpio, CLCK, Level::High).is_err() { return Err(()); }		
     } 
-    Ok()
+    Ok(())
 }
 
 fn pint_byte (byte: &BitVec) {
@@ -90,9 +90,9 @@ fn wait_for_pin (gpio: &mut Gpio, pin: u8, from_state: Level) -> Result <(), ()>
         timeout += 1;
     }
     if timeout > 9999 {
-        Err()
+        Err(())
     } else {
-        Ok()
+        Ok(())
     }
 }
 
