@@ -33,9 +33,12 @@ fn main() {
 	let mut data: Vec<Level> = Vec::new();
 
     // ask for data and wait for response 
-    while gpio.read(LTCH_IN).unwrap() == Level::Low {
-		gpio.write(LTCH_OUT, Level::High)	
-	}
+    println!("Request data");
+
+    gpio.write(LTCH_OUT, Level::High);
+    while gpio.read(LTCH_IN).unwrap() == Level::Low {}
+
+    println!("Start read");
 
     // wait for all 24 bits to be received
 	for i in 0..24 {
@@ -46,19 +49,27 @@ fn main() {
         }
         // pull the data and store it in an array
 		data.push(gpio.read(DS).unwrap());
-        
+
         // wait for clock to go from high to low, so we know that the sender is done with this bit.
 		while gpio.read(CLCK).unwrap() == Level::High {
             //thread::sleep(Duration::from_micros(1));
         }		
 	}
 
+    println!("Read finished");
+
     // after resonse, drop request
     gpio.write(LTCH_OUT, Level::Low);
+
+    println!("Tell sender completed");
+
+    print!("data:");
 
 	for i in 0..data.len() {
 		print!("{}", match data[i]{ Level::Low => 0, Level::High => 1, });
 	}
+
+    println!("done");
 }
 
 
