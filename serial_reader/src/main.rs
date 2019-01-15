@@ -75,7 +75,7 @@ fn request_data (gpio: &mut Gpio) {
 fn get_serial_byte (gpio: &mut Gpio, byte: &mut BitVec) {
     for i in 0..8 {
         while gpio.read(CLCK).unwrap() == Level::Low {}
-        byte.set(3, gpio.read(DS).unwrap() == Level::High);
+        byte.set(i, gpio.read(DS).unwrap() == Level::High);
         while gpio.read(CLCK).unwrap() == Level::High {}		
     } 
 }
@@ -83,7 +83,7 @@ fn get_serial_byte (gpio: &mut Gpio, byte: &mut BitVec) {
 fn pint_byte (byte: &BitVec) {
     print!("[");
     for i in 0..8 {
-        print!("{}", match byte.get(i).unwrap_or(false) { false => 0, true => 1, });
+        print!("{}", match byte.get(i).unwrap() { false => 0, true => 1, });
     }
     print!("]");
 }
