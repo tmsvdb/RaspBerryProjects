@@ -43,11 +43,15 @@ fn main() {
 	for i in 0..24 {
 		
         // wait for clock to go from low to high, so we know that the data line is set
-		while gpio.read(CLCK).unwrap() == Level::Low {}
+		while gpio.read(CLCK).unwrap() == Level::Low {
+            thread::sleep(Duration::from_micros(1));
+        }
         // pull the data and store it in an array
 		data.push(gpio.read(DS).unwrap());
         // wait for clock to go from high to low, so we know that the sender is done with this bit.
-		while gpio.read(CLCK).unwrap() == Level::High {}		
+		while gpio.read(CLCK).unwrap() == Level::High {
+            thread::sleep(Duration::from_micros(1));
+        }		
 	}
 
 	for i in 0..data.len() {
