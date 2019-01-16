@@ -5,6 +5,7 @@ extern crate bit_vec;
 
 use std::thread;
 use std::time::Duration;
+use std::time::SystemTime;
 use std::iter::Iterator;
 
 use rppal::gpio::{Gpio, Mode, Level};
