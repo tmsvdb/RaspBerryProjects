@@ -42,7 +42,7 @@ fn main() {
 
         if request_data (&mut gpio).is_err() { println!("Request failed!"); continue; } 
         if get_serial_bytes (&mut gpio, &mut bytes).is_err() { println!("Get data failed!"); continue; } 
-	    if wait_for_pin(&gpio, LTCH_IN, Level::High).is_err() { println!("Serial not completed!"); continue; }
+	    if wait_for_pin(&gpio, LTCH_IN, Level::High, Level::Low).is_err() { println!("Serial not completed!"); continue; }
 
         let cb = bytes.to_bytes();
 	    println!("try({}) bytes: {}-{}-{}", tries, cb[0], cb[1], cb[2]);
@@ -51,7 +51,7 @@ fn main() {
 
 fn request_data (gpio: &mut Gpio) -> Result <(), ()> {
     gpio.write(LTCH_OUT, Level::High);
-    match wait_for_pin(&gpio, LTCH_IN, Level::Low) {
+    match wait_for_pin(&gpio, LTCH_IN, Level::Low, Level::High) {
         Ok(o) => return Ok(()),
         Err(e) => return Err(()),
     }
@@ -59,31 +59,29 @@ fn request_data (gpio: &mut Gpio) -> Result <(), ()> {
 
 fn get_serial_bytes (gpio: &mut Gpio, byte: &mut BitVec) -> Result <(), ()> {
     for i in 0..24 {
-        if wait_for_pin(&gpio, CLCK, Level::Low).is_err() { return Err(()); }
+        if wait_for_pin(&gpio, CLCK, Level::High, Level::Low).is_err() { return Err(()); }
         if (gpio.read(DS).unwrap() == Level::High) {
             byte.set(i, true);
         } else {
             byte.set(i, false);
         }
-        if wait_for_pin(&gpio, CLCK, Level::High).is_err() { return Err(()); }		
     } 
     Ok(())
 }
 
-fn wait_for_pin (gpio: &Gpio, pin: u8, from_state: Level) -> Result <(), ()> {
+fn wait_for_pin (gpio: &Gpio, pin: u8, from_state: Level, to_state: Level) -> Result <(), ()> {
     let mut timeout = 0;
-    // check if pin is in start state
-    if (gpio.read(CLCK).unwrap() != from_state) {
-        // wait until pin has reached start state
-        while gpio.read(CLCK).unwrap() != from_state {
-            // break on timeout     
-            if timeout >= TIMEOUT { return Err(()) } else { timeout += 1; }
-        }
+
+    // wait until pin is in the from_state
+    while gpio.read(CLCK).unwrap() != from_state {
+        // break on timeout     
+        if timeout >= TIMEOUT { return Err(()) } else { timeout += 1; }
     }
-    
+
     timeout = 0;
-    // wait until pin has changed state
-    while gpio.read(CLCK).unwrap() == from_state {
+    
+    // wait until pin has changed to the to_state
+    while gpio.read(CLCK).unwrap() != to_state {
         // break on timeout     
         if timeout >= TIMEOUT { return Err(()) } else { timeout += 1; }
     }
