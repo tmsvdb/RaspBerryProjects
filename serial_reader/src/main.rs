@@ -72,14 +72,23 @@ fn get_serial_bytes (gpio: &mut Gpio, byte: &mut BitVec) -> Result <(), ()> {
 
 fn wait_for_pin (gpio: &Gpio, pin: u8, from_state: Level) -> Result <(), ()> {
     let mut timeout = 0;
-    while gpio.read(CLCK).unwrap() == from_state && timeout < TIMEOUT {
-        timeout += 1;
+    // check if pin is in start state
+    if (gpio.read(CLCK).unwrap() != from_state) {
+        // wait until pin has reached start state
+        while gpio.read(CLCK).unwrap() != from_state {
+            // break on timeout     
+            if timeout >= TIMEOUT { return Err(()) } else { timeout += 1; }
+        }
     }
-    if timeout >= TIMEOUT {
-        Err(())
-    } else {
-        Ok(())
+    
+    timeout = 0;
+    // wait until pin has changed state
+    while gpio.read(CLCK).unwrap() == from_state {
+        // break on timeout     
+        if timeout >= TIMEOUT { return Err(()) } else { timeout += 1; }
     }
+
+    Ok(())
 }
 
 
