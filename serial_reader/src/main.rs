@@ -41,33 +41,30 @@ fn main() {
         tries += 1;
         bytes = BitVec::from_elem(24, false);
 
-        if request_data (&mut gpio).is_err() { println!("Request failed!"); continue; } 
-        if get_serial_bytes (&mut gpio, &mut bytes).is_err() { println!("Get data failed!"); continue; } 
-	    if wait_for_pin(&gpio, LTCH_IN, Level::Low, Level::Low).is_err() { println!("Serial not completed!"); continue; }
+        // request new data
+        gpio.write(LTCH_OUT, Level::High);
+        // wait for request accepted response
+        if wait_for_pin(&gpio, LTCH_IN, Level::Low, Level::High).is_err() { println!("Request failed!"); continue; } 
+        // gather data -> per bit get data pin state
+        for i in 0..24 {
+            // wait for clock to go from high to low, so we know the data line is set
+            if wait_for_pin(&gpio, CLCK, Level::High, Level::Low).is_err() { 
+                println!("Get data failed!"); 
+                continue; 
+            }
+            if (gpio.read(DS).unwrap() == Level::High) {
+                byte.set(i, true);
+            } else {
+                byte.set(i, false);
+            }
+        } 
+        if get_serial_bytes (&mut gpio, &mut bytes).is_err() { } 
+        // wait for request complete
+	    if wait_for_pin(&gpio, LTCH_IN, Level::High, Level::Low).is_err() { println!("Serial not completed!"); continue; }
 
         let cb = bytes.to_bytes();
 	    println!("try({}) bytes: {}-{}-{}", tries, cb[0], cb[1], cb[2]);
     }
-}
-
-fn request_data (gpio: &mut Gpio) -> Result <(), ()> {
-    gpio.write(LTCH_OUT, Level::High);
-    match wait_for_pin(&gpio, LTCH_IN, Level::Low, Level::High) {
-        Ok(o) => return Ok(()),
-        Err(e) => return Err(()),
-    }
-}
-
-fn get_serial_bytes (gpio: &mut Gpio, byte: &mut BitVec) -> Result <(), ()> {
-    for i in 0..24 {
-        if wait_for_pin(&gpio, CLCK, Level::High, Level::Low).is_err() { return Err(()); }
-        if (gpio.read(DS).unwrap() == Level::High) {
-            byte.set(i, true);
-        } else {
-            byte.set(i, false);
-        }
-    } 
-    Ok(())
 }
 
 fn wait_for_pin (gpio: &Gpio, pin: u8, from_state: Level, to_state: Level) -> Result <(), ()> {
