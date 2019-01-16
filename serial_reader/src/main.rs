@@ -17,7 +17,7 @@ const DS: u8 = 14;
 const CLCK: u8 = 15;
 const LTCH_IN: u8 = 18;
 const LTCH_OUT: u8 = 23; ///Request data;
-const TIMEOUT: u32 = 100_000_000;
+const TIMEOUT: u32 = 1000;
 
 fn main() {
     let device_info = DeviceInfo::new().unwrap();
@@ -70,20 +70,17 @@ fn get_serial_bytes (gpio: &mut Gpio, byte: &mut BitVec) -> Result <(), ()> {
 }
 
 fn wait_for_pin (gpio: &Gpio, pin: u8, from_state: Level, to_state: Level) -> Result <(), ()> {
-    let mut timeout = 0;
 
+    let mut now = SystemTime::now();
     // wait until pin is in the from_state
     while gpio.read(CLCK).unwrap() != from_state {
-        // break on timeout     
-        if timeout >= TIMEOUT { return Err(()) } else { timeout += 1; }
+        if now.elapsed().as_millis() >= TIMEOUT { return Err(()) }
     }
 
-    timeout = 0;
-    
+    now = SystemTime::now();    
     // wait until pin has changed to the to_state
     while gpio.read(CLCK).unwrap() != to_state {
-        // break on timeout     
-        if timeout >= TIMEOUT { return Err(()) } else { timeout += 1; }
+        if now.elapsed().as_millis() >= TIMEOUT { return Err(()) }
     }
 
     Ok(())
