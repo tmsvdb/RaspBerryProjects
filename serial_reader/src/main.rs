@@ -75,13 +75,13 @@ fn wait_for_pin (gpio: &Gpio, pin: u8, from_state: Level, to_state: Level) -> Re
     let mut now = SystemTime::now();
     // wait until pin is in the from_state
     while gpio.read(CLCK).unwrap() != from_state {
-        if now.elapsed().as_millis() >= TIMEOUT { return Err(()) }
+        if now.elapsed().unwrap().as_millis() >= TIMEOUT { return Err(()) }
     }
 
     now = SystemTime::now();    
     // wait until pin has changed to the to_state
     while gpio.read(CLCK).unwrap() != to_state {
-        if now.elapsed().as_millis() >= TIMEOUT { return Err(()) }
+        if now.elapsed().unwrap().as_millis() >= TIMEOUT { return Err(()) }
     }
 
     Ok(())
