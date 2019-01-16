@@ -35,34 +35,38 @@ fn main() {
     let mut bytes: BitVec;
 
     loop {
-	
+        
+        // set start values
 	    gpio.write(LTCH_OUT, Level::Low);
-        thread::sleep(Duration::from_millis(100));
         tries += 1;
-        bytes = BitVec::from_elem(24, false);
-
+        bits = BitVec::from_elem(24, false);
+        thread::sleep(Duration::from_millis(100));
+ 
         // request new data
         gpio.write(LTCH_OUT, Level::High);
+
         // wait for request accepted response
         if wait_for_pin(&gpio, LTCH_IN, Level::Low, Level::High).is_err() { println!("Request failed!"); continue; } 
+        
         // gather data -> per bit get data pin state
-        for i in 0..24 {
+        for _i in 0..24 {
             // wait for clock to go from high to low, so we know the data line is set
             if wait_for_pin(&gpio, CLCK, Level::High, Level::Low).is_err() { 
                 println!("Get data failed!"); 
                 continue; 
             }
             if (gpio.read(DS).unwrap() == Level::High) {
-                byte.set(i, true);
+                bits.set(_i, true);
             } else {
-                byte.set(i, false);
+                bits.set(_i, false);
             }
         } 
-        if get_serial_bytes (&mut gpio, &mut bytes).is_err() { } 
+
         // wait for request complete
 	    if wait_for_pin(&gpio, LTCH_IN, Level::High, Level::Low).is_err() { println!("Serial not completed!"); continue; }
 
-        let cb = bytes.to_bytes();
+        // print data
+        let cb = bits.to_bytes();
 	    println!("try({}) bytes: {}-{}-{}", tries, cb[0], cb[1], cb[2]);
     }
 }
