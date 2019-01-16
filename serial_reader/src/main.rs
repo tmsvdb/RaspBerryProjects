@@ -32,14 +32,13 @@ fn main() {
     gpio.set_mode(LTCH_OUT, Mode::Output);
 
     let mut tries = 0;
-    let mut bytes: BitVec;
 
     loop {
         
         // set start values
 	    gpio.write(LTCH_OUT, Level::Low);
         tries += 1;
-        bits = BitVec::from_elem(24, false);
+        let mut bits = BitVec::from_elem(24, false);
         thread::sleep(Duration::from_millis(100));
  
         // request new data
