@@ -43,7 +43,7 @@ fn main() {
 
         if request_data (&mut gpio).is_err() { println!("Request failed!"); continue; } 
         if get_serial_bytes (&mut gpio, &mut bytes).is_err() { println!("Get data failed!"); continue; } 
-	    if wait_for_pin(&gpio, LTCH_IN, Level::High, Level::Low).is_err() { println!("Serial not completed!"); continue; }
+	    if wait_for_pin(&gpio, LTCH_IN, Level::Low, Level::Low).is_err() { println!("Serial not completed!"); continue; }
 
         let cb = bytes.to_bytes();
 	    println!("try({}) bytes: {}-{}-{}", tries, cb[0], cb[1], cb[2]);
