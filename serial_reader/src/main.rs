@@ -39,7 +39,7 @@ fn main() {
 	    gpio.write(LTCH_OUT, Level::Low);
         tries += 1;
         let mut bits = BitVec::from_elem(24, false);
-        thread::sleep(Duration::from_millis(100));
+        thread::sleep(Duration::from_millis(500));
  
         // request new data
         gpio.write(LTCH_OUT, Level::High);
