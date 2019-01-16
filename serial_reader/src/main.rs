@@ -17,6 +17,7 @@ const DS: u8 = 14;
 const CLCK: u8 = 15;
 const LTCH_IN: u8 = 18;
 const LTCH_OUT: u8 = 23; ///Request data;
+const TIMEOUT: u8 = 10_000_000;
 
 fn main() {
     let device_info = DeviceInfo::new().unwrap();
@@ -34,19 +35,17 @@ fn main() {
 
     loop {
 	
-	gpio.write(LTCH_OUT, Level::Low);
+	    gpio.write(LTCH_OUT, Level::Low);
         thread::sleep(Duration::from_millis(200));
         tries += 1;
         bytes = BitVec::from_elem(24, false);
 
         if request_data (&mut gpio).is_err() { println!("Request failed!"); continue; } 
         if get_serial_bytes (&mut gpio, &mut bytes).is_err() { println!("Get data failed!"); continue; } 
-	if wait_for_pin(&gpio, LTCH_IN, Level::High).is_err() { println!("Serial not completed!"); continue; }
-	
-	print!("try({}) ", tries);
-        pint_bytes (&bytes);
+	    if wait_for_pin(&gpio, LTCH_IN, Level::High).is_err() { println!("Serial not completed!"); continue; }
 
-        //println!("");
+        let cb = bytes.to_bytes();
+	    println!("try({}) bytes: {}-{}-{}", tries, cb[0], cb[1], cb[2]);
     }
 }
 
@@ -71,17 +70,12 @@ fn get_serial_bytes (gpio: &mut Gpio, byte: &mut BitVec) -> Result <(), ()> {
     Ok(())
 }
 
-fn pint_bytes (bytes: &BitVec) {
-    let cb = bytes.to_bytes(); 
-    println!("bytes: {}-{}-{}", cb[0], cb[1], cb[2])
-}
-
 fn wait_for_pin (gpio: &Gpio, pin: u8, from_state: Level) -> Result <(), ()> {
     let mut timeout = 0;
-    while gpio.read(CLCK).unwrap() == from_state && timeout < 1_000_000_000 {
+    while gpio.read(CLCK).unwrap() == from_state && timeout < TIMEOUT {
         timeout += 1;
     }
-    if timeout > 999_999_999 {
+    if timeout >= TIMEOUT {
         Err(())
     } else {
         Ok(())
