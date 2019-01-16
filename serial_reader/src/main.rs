@@ -13,10 +13,10 @@ use rppal::system::DeviceInfo;
 
 use bit_vec::BitVec;
 
-const DS: u8 = 10;
-const CLCK: u8 = 11;
-const LTCH_IN: u8 = 8;
-const LTCH_OUT: u8 = 7; ///Request data;
+const DS: u8 = 14;
+const CLCK: u8 = 15;
+const LTCH_IN: u8 = 18;
+const LTCH_OUT: u8 = 23; ///Request data;
 
 fn main() {
     let device_info = DeviceInfo::new().unwrap();
@@ -30,26 +30,20 @@ fn main() {
     gpio.set_mode(LTCH_OUT, Mode::Output);
 
     let mut tries = 0;
+    let mut bytes: BitVec;
 
     loop {
-
-        thread::sleep(Duration::from_millis(50));
+	
+	gpio.write(LTCH_OUT, Level::Low);
+        thread::sleep(Duration::from_millis(200));
         tries += 1;
-        //println!("Try({}) Request data", tries);
+        bytes = BitVec::from_elem(24, false);
 
-        //let mut data: Vec<Level> = Vec::new();
-        let mut bytes = BitVec::from_elem(24, false);
-
-        // ask for data and wait for response     
         if request_data (&mut gpio).is_err() { println!("Request failed!"); continue; } 
-
         if get_serial_bytes (&mut gpio, &mut bytes).is_err() { println!("Get data failed!"); continue; } 
-
-        // after resonse, drop request
-        gpio.write(LTCH_OUT, Level::Low);
-
-        //println!("Read finished");
-
+	if wait_for_pin(&gpio, LTCH_IN, Level::High).is_err() { println!("Serial not completed!"); continue; }
+	
+	print!("try({}) ", tries);
         pint_bytes (&bytes);
 
         //println!("");
@@ -84,10 +78,10 @@ fn pint_bytes (bytes: &BitVec) {
 
 fn wait_for_pin (gpio: &Gpio, pin: u8, from_state: Level) -> Result <(), ()> {
     let mut timeout = 0;
-    while gpio.read(CLCK).unwrap() == from_state && timeout < 10_000_000 {
+    while gpio.read(CLCK).unwrap() == from_state && timeout < 1_000_000_000 {
         timeout += 1;
     }
-    if timeout > 9_999_999 {
+    if timeout > 999_999_999 {
         Err(())
     } else {
         Ok(())
