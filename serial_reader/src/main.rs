@@ -36,7 +36,7 @@ fn main() {
     loop {
 	
 	    gpio.write(LTCH_OUT, Level::Low);
-        thread::sleep(Duration::from_millis(10));
+        thread::sleep(Duration::from_millis(100));
         tries += 1;
         bytes = BitVec::from_elem(24, false);
 
