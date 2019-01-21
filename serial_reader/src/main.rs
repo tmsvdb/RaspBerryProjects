@@ -84,7 +84,7 @@ fn main() {
     }
 }
 
-fn wait_for_state_change (gpio: &Gpio, SystemTime: &mut time, pin: u8, from_state: Level, to_state: Level) -> Result <(), String> {
+fn wait_for_state_change (gpio: &Gpio, SystemTime: &time, pin: u8, from_state: Level, to_state: Level) -> Result <(), String> {
 
     time = SystemTime::now();
     // wait until pin is in the from_state
