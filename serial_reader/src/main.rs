@@ -40,14 +40,13 @@ fn main() {
 	    gpio.write(LTCH_OUT, Level::Low);
         tries += 1;
         let mut bits = BitVec::from_elem(24, false);
-        let mut time = SystemTime::now();
         thread::sleep(Duration::from_millis(100));
  
         // request new data
         gpio.write(LTCH_OUT, Level::High);
 
         // wait for request accepted response
-        match wait_for_state_change(&gpio, &mut time, LTCH_IN, Level::Low, Level::High) { 
+        match wait_for_state_change(&gpio, LTCH_IN, Level::Low, Level::High) { 
             Ok(_) => {},
             Err(e) => {
                 println!("Request failed: {}", e);
@@ -58,7 +57,7 @@ fn main() {
         // gather data -> per bit get data pin state
         for _i in 0..24 {
             // wait for clock to go from high to low, so we know the data line is set
-            match wait_for_state_change(&gpio, &mut time, CLCK, Level::High, Level::Low) { 
+            match wait_for_state_change(&gpio, CLCK, Level::High, Level::Low) { 
                 Ok(_) => {},
                 Err(e) => {
                     println!("Get data failed: {}", e); 
@@ -73,7 +72,7 @@ fn main() {
         } 
 
         // wait for request complete
-	    match wait_for_state_change(&gpio, &mut time, LTCH_IN, Level::High, Level::Low) { 
+	    match wait_for_state_change(&gpio, LTCH_IN, Level::High, Level::Low) { 
             Ok(_) => {},
             Err(e) => {
                 println!("Serial not completed: {}", e); 
@@ -87,7 +86,9 @@ fn main() {
     }
 }
 
-fn wait_for_state_change (gpio: &Gpio, time: &mut SystemTime, pin: u8, from_state: Level, to_state: Level) -> Result <(), String> {
+fn wait_for_state_change (gpio: &Gpio, pin: u8, from_state: Level, to_state: Level) -> Result <(), String> {
+
+    let mut time = SystemTime::now();
 
     // wait until pin is in the from_state
     while gpio.read(CLCK).unwrap() != from_state {
