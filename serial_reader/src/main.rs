@@ -33,6 +33,7 @@ fn main() {
     gpio.set_mode(LTCH_OUT, Mode::Output);
 
     let mut tries = 0;
+    let mut time: SystemTime;
 
     loop {
         
@@ -46,14 +47,21 @@ fn main() {
         gpio.write(LTCH_OUT, Level::High);
 
         // wait for request accepted response
-        if wait_for_pin(&gpio, LTCH_IN, Level::Low, Level::High).is_err() { println!("Request failed!"); continue; } 
+        match wait_for_state_change(&gpio, &mut time, LTCH_IN, Level::Low, Level::High) { 
+            Err(e) => {
+                println!("Request failed: {}", e)
+                continue; 
+            },
+        } 
         
         // gather data -> per bit get data pin state
         for _i in 0..24 {
             // wait for clock to go from high to low, so we know the data line is set
-            if wait_for_pin(&gpio, CLCK, Level::High, Level::Low).is_err() { 
-                println!("Get data failed!"); 
-                continue; 
+            match wait_for_state_change(&gpio, &mut time, CLCK, Level::High, Level::Low) { 
+                Err(e) => {
+                    println!("Get data failed: {}", e); 
+                    continue; 
+                }
             }
             if (gpio.read(DS).unwrap() == Level::High) {
                 bits.set(_i, true);
@@ -63,7 +71,12 @@ fn main() {
         } 
 
         // wait for request complete
-	    if wait_for_pin(&gpio, LTCH_IN, Level::High, Level::Low).is_err() { println!("Serial not completed!"); continue; }
+	    match wait_for_state_change(&gpio, &mut time, LTCH_IN, Level::High, Level::Low) { 
+            Err(e) => {
+                println!("Serial not completed: ", e); 
+                continue;
+            }
+        }
 
         // print data
         let cb = bits.to_bytes();
@@ -71,27 +84,27 @@ fn main() {
     }
 }
 
-fn wait_for_pin (gpio: &Gpio, pin: u8, from_state: Level, to_state: Level) -> Result <(), ()> {
+fn wait_for_state_change (gpio: &Gpio, SystemTime: &mut time, pin: u8, from_state: Level, to_state: Level) -> Result <(), &str> {
 
-    let mut now = SystemTime::now();
+    time = SystemTime::now();
     // wait until pin is in the from_state
     while gpio.read(CLCK).unwrap() != from_state {
-        if now.elapsed().unwrap().subsec_millis() >= TIMEOUT { return Err(()) }
+        if time.elapsed().unwrap().subsec_millis() >= TIMEOUT { return Err("start state timeout") }
     }
 
-    let mut now = SystemTime::now(); 
+    time = SystemTime::now(); 
     // wait until pin has changed to the to_state
     while gpio.read(CLCK).unwrap() != to_state {
-        if now.elapsed().unwrap().subsec_millis() >= TIMEOUT { return Err(()) }
+        if time.elapsed().unwrap().subsec_millis() >= TIMEOUT { return Err("change state timeout") }
     }
 
     thread::sleep(Duration::from_micros(STATE_CHANGE_TIME));
 
-    let mut now = SystemTime::now(); 
+    time = SystemTime::now(); 
     // check the pin state again to after a few microseconds, 
     // to prevent value change stuttering.
     while gpio.read(CLCK).unwrap() != to_state {
-        if now.elapsed().unwrap().subsec_millis() >= TIMEOUT { return Err(()) }
+        if time.elapsed().unwrap().subsec_millis() >= TIMEOUT { return Err("stabalize state timeout") }
     }
 
     Ok(())
