@@ -86,13 +86,12 @@ fn main() {
 
 fn wait_for_state_change (gpio: &Gpio, time: &mut SystemTime, pin: u8, from_state: Level, to_state: Level) -> Result <(), String> {
 
-    time = SystemTime::now();
+    time = &mut SystemTime::now();
     // wait until pin is in the from_state
     while gpio.read(CLCK).unwrap() != from_state {
         if time.elapsed().unwrap().subsec_millis() >= TIMEOUT { return Err(String::from("start state timeout")) }
     }
 
-    time = SystemTime::now(); 
     // wait until pin has changed to the to_state
     while gpio.read(CLCK).unwrap() != to_state {
         if time.elapsed().unwrap().subsec_millis() >= TIMEOUT { return Err(String::from("change state timeout")) }
@@ -100,7 +99,6 @@ fn wait_for_state_change (gpio: &Gpio, time: &mut SystemTime, pin: u8, from_stat
 
     thread::sleep(Duration::from_micros(STATE_CHANGE_TIME));
 
-    time = SystemTime::now(); 
     // check the pin state again to after a few microseconds, 
     // to prevent value change stuttering.
     while gpio.read(CLCK).unwrap() != to_state {
