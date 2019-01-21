@@ -48,6 +48,7 @@ fn main() {
 
         // wait for request accepted response
         match wait_for_state_change(&gpio, &mut time, LTCH_IN, Level::Low, Level::High) { 
+            Ok(_) = {},
             Err(e) => {
                 println!("Request failed: {}", e);
                 continue; 
@@ -58,6 +59,7 @@ fn main() {
         for _i in 0..24 {
             // wait for clock to go from high to low, so we know the data line is set
             match wait_for_state_change(&gpio, &mut time, CLCK, Level::High, Level::Low) { 
+                Ok(_) = {},
                 Err(e) => {
                     println!("Get data failed: {}", e); 
                     continue; 
@@ -72,6 +74,7 @@ fn main() {
 
         // wait for request complete
 	    match wait_for_state_change(&gpio, &mut time, LTCH_IN, Level::High, Level::Low) { 
+            Ok(_) = {},
             Err(e) => {
                 println!("Serial not completed: {}", e); 
                 continue;
