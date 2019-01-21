@@ -49,7 +49,7 @@ fn main() {
         // wait for request accepted response
         match wait_for_state_change(&gpio, &mut time, LTCH_IN, Level::Low, Level::High) { 
             Err(e) => {
-                println!("Request failed: {}", e)
+                println!("Request failed: {}", e);
                 continue; 
             },
         } 
@@ -61,7 +61,7 @@ fn main() {
                 Err(e) => {
                     println!("Get data failed: {}", e); 
                     continue; 
-                }
+                },
             }
             if (gpio.read(DS).unwrap() == Level::High) {
                 bits.set(_i, true);
@@ -75,7 +75,7 @@ fn main() {
             Err(e) => {
                 println!("Serial not completed: ", e); 
                 continue;
-            }
+            },
         }
 
         // print data
