@@ -79,7 +79,7 @@ fn wait_for_pin (gpio: &Gpio, pin: u8, from_state: Level, to_state: Level) -> Re
         if now.elapsed().unwrap().subsec_millis() >= TIMEOUT { return Err(()) }
     }
 
-    now = SystemTime::now();    
+    let mut now = SystemTime::now(); 
     // wait until pin has changed to the to_state
     while gpio.read(CLCK).unwrap() != to_state {
         if now.elapsed().unwrap().subsec_millis() >= TIMEOUT { return Err(()) }
@@ -87,7 +87,7 @@ fn wait_for_pin (gpio: &Gpio, pin: u8, from_state: Level, to_state: Level) -> Re
 
     thread::sleep(Duration::from_micros(STATE_CHANGE_TIME));
 
-    now = SystemTime::now();    
+    let mut now = SystemTime::now(); 
     // check the pin state again to after a few microseconds, 
     // to prevent value change stuttering.
     while gpio.read(CLCK).unwrap() != to_state {
