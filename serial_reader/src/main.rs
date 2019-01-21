@@ -19,6 +19,7 @@ const CLCK: u8 = 15;
 const LTCH_IN: u8 = 18;
 const LTCH_OUT: u8 = 23; ///Request data;
 const TIMEOUT: u32 = 100; // max 999 milliseconds
+const STATE_CHANGE_TIME: u64 = 10; // pin value change dampening, in microseconds.
 
 fn main() {
     let device_info = DeviceInfo::new().unwrap();
@@ -80,6 +81,15 @@ fn wait_for_pin (gpio: &Gpio, pin: u8, from_state: Level, to_state: Level) -> Re
 
     now = SystemTime::now();    
     // wait until pin has changed to the to_state
+    while gpio.read(CLCK).unwrap() != to_state {
+        if now.elapsed().unwrap().subsec_millis() >= TIMEOUT { return Err(()) }
+    }
+
+    thread::sleep(Duration::from_micros(STATE_CHANGE_TIME));
+
+    now = SystemTime::now();    
+    // check the pin state again to after a few microseconds, 
+    // to prevent value change stuttering.
     while gpio.read(CLCK).unwrap() != to_state {
         if now.elapsed().unwrap().subsec_millis() >= TIMEOUT { return Err(()) }
     }
