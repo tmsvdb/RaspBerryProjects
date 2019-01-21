@@ -33,7 +33,7 @@ fn main() {
     gpio.set_mode(LTCH_OUT, Mode::Output);
 
     let mut tries = 0;
-    let mut time: SystemTime;
+    let mut time: SystemTime = SystemTime.now();
 
     loop {
         
