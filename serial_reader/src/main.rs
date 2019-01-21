@@ -18,7 +18,7 @@ const DS: u8 = 14;
 const CLCK: u8 = 15;
 const LTCH_IN: u8 = 18;
 const LTCH_OUT: u8 = 23; ///Request data;
-const TIMEOUT: u32 = 100; // max 999 milliseconds
+const TIMEOUT: u32 = 500; // max 999 milliseconds
 const STATE_CHANGE_TIME: u64 = 10; // pin value change dampening, in microseconds.
 
 fn main() {
@@ -40,7 +40,7 @@ fn main() {
 	    gpio.write(LTCH_OUT, Level::Low);
         tries += 1;
         let mut bits = BitVec::from_elem(24, false);
-        thread::sleep(Duration::from_millis(100));
+        thread::sleep(Duration::from_millis(500));
  
         // request new data
         gpio.write(LTCH_OUT, Level::High);
