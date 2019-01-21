@@ -72,7 +72,7 @@ fn main() {
         } 
 
         // wait for request complete
-	    match wait_for_state_change(&gpio, LTCH_IN, Level::High, Level::Low) { 
+	    match wait_for_state_change(&gpio, LTCH_IN, Level::Low, Level::Low) { 
             Ok(_) => {},
             Err(e) => {
                 println!("Serial not completed: {}", e); 
