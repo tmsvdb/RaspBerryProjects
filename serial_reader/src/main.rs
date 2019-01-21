@@ -33,7 +33,6 @@ fn main() {
     gpio.set_mode(LTCH_OUT, Mode::Output);
 
     let mut tries = 0;
-    let mut time: SystemTime = SystemTime::now();
 
     loop {
         
@@ -41,6 +40,7 @@ fn main() {
 	    gpio.write(LTCH_OUT, Level::Low);
         tries += 1;
         let mut bits = BitVec::from_elem(24, false);
+        let mut time = SystemTime::now();
         thread::sleep(Duration::from_millis(100));
  
         // request new data
@@ -89,7 +89,6 @@ fn main() {
 
 fn wait_for_state_change (gpio: &Gpio, time: &mut SystemTime, pin: u8, from_state: Level, to_state: Level) -> Result <(), String> {
 
-    time = &mut SystemTime::now();
     // wait until pin is in the from_state
     while gpio.read(CLCK).unwrap() != from_state {
         if time.elapsed().unwrap().subsec_millis() >= TIMEOUT { return Err(String::from("start state timeout")) }
