@@ -1,0 +1,9 @@
+[package]
+name = "arm"
+version = "0.1.0"
+authors = ["Thomas van den Bighelaar <tmsvdb80@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+rppal = "0.10"
+bit-vec = "0.5.0"
